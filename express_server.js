@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const port = 8080;
 
-app.set("view engine", "ejs");
+app.set("view engine", "ejs")
 
-const urlDataBase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouse.ca",
   "9sm5xk": "http//www.google.ca"
 };
@@ -13,8 +13,9 @@ app.get("/", (reg, res) => {
   res.send("Hello");
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDataBase);
+app.get("/urls", (req, res) => {
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
 });
 
 app.get("/hello", (req, res) => {
