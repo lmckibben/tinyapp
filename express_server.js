@@ -28,8 +28,6 @@ function generateRandomString() {
   return output
 };
 
-console.log(generateRandomString());
-
 app.set("view engine", "ejs")
 
 const urlDatabase = {
@@ -59,6 +57,8 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body);
+  urlDatabase[generateRandomString()] = req.body.longURL;
+  console.log('urlDatabase', urlDatabase)
   res.send("Ok")
 });
 
