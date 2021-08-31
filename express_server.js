@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 const port = 8080;
 
@@ -8,6 +9,8 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouse.ca",
   "9sm5xk": "http//www.google.ca"
 };
+
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (reg, res) => {
   res.send("Hello");
