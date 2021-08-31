@@ -8,12 +8,20 @@ function generateRandomString() {
   let i = 0;
   while(i < 6) {
     let ranNum = Math.floor(Math.random() * 3) + 1;
-    console.log('ranNum', ranNum);
     if (ranNum === 1) {
       let ranCharCode = Math.floor(Math.random() * (57 - 48) + 48);
       let ranChar = String.fromCharCode(ranCharCode);
-      console.log('ranCharCode', ranCharCode)
-      console.log('ranChar', ranChar)
+      output += ranChar;
+    }
+    if (ranNum === 2) {
+      let ranCharCode = Math.floor(Math.random() * (90 - 65) + 65);
+      let ranChar = String.fromCharCode(ranCharCode);
+      output += ranChar;
+    }
+    if (ranNum === 3) {
+      let ranCharCode = Math.floor(Math.random() * (122 - 97) + 97);
+      let ranChar = String.fromCharCode(ranCharCode);
+      output += ranChar;
     }
     i++
   }
