@@ -20,7 +20,7 @@
   <div class="card-footer text-muted">
     <form method="POST" action="/urls/<%= shortURL %>/edit">
       <h2>Edit</h2>
-      <label>New URL:</label><input <%= shortURL %>/><button class="btn-primary" type"submit>submit</button>
+      <label>New URL:</label><input name="<%= shortURL %>" value="http://"/><button class="btn-primary" type"submit>submit</button>
     </form>
   </div>
   <!-- Bootstrap JS -->
