@@ -8,7 +8,13 @@ function generateRandomString() {
   let i = 0;
   while(i < 6) {
     let ranNum = Math.floor(Math.random() * 3) + 1;
-    console.log(ranNum);
+    console.log('ranNum', ranNum);
+    if (ranNum === 1) {
+      let ranCharCode = Math.floor(Math.random() * (57 - 48) + 48);
+      let ranChar = String.fromCharCode(ranCharCode);
+      console.log('ranCharCode', ranCharCode)
+      console.log('ranChar', ranChar)
+    }
     i++
   }
   return output
@@ -25,7 +31,7 @@ const urlDatabase = {
 
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.get("/", (reg, res) => {
+app.get("/", (req, res) => {
   res.send("Hello");
 });
 
