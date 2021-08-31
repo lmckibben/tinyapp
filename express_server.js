@@ -3,6 +3,19 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 8080;
 
+function generateRandomString() {
+  let output = "";
+  let i = 0;
+  while(i < 6) {
+    let ranNum = Math.floor(Math.random() * 3) + 1;
+    console.log(ranNum);
+    i++
+  }
+  return output
+};
+
+console.log(generateRandomString());
+
 app.set("view engine", "ejs")
 
 const urlDatabase = {
@@ -28,6 +41,11 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  res.send("Ok")
 });
 
 app.get("/hello", (req, res) => {
