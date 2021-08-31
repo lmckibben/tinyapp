@@ -3,10 +3,10 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 8080;
 
-function generateRandomString() {
+const generateRandomString = function() {
   let output = "";
   let i = 0;
-  while(i < 6) {
+  while (i < 6) {
     let ranNum = Math.floor(Math.random() * 3) + 1;
     if (ranNum === 1) {
       let ranCharCode = Math.floor(Math.random() * (57 - 48) + 48);
@@ -23,12 +23,12 @@ function generateRandomString() {
       let ranChar = String.fromCharCode(ranCharCode);
       output += ranChar;
     }
-    i++
+    i++;
   }
-  return output
+  return output;
 };
 
-app.set("view engine", "ejs")
+app.set("view engine", "ejs");
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouse.ca",
@@ -56,10 +56,10 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  generatedShortUrl = generateRandomString();
+  const generatedShortUrl = generateRandomString();
   urlDatabase[generatedShortUrl] = req.body.longURL;
   const templateVars = { shortURL: generatedShortUrl, longURL: urlDatabase[generatedShortUrl] };
-  res.render("urls_show", templateVars);  
+  res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -69,7 +69,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
-})
+});
 
 
 
