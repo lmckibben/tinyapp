@@ -114,8 +114,12 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res)=> {
   const foundUserEmail = getUserEmail(req.body.email);
   if (foundUserEmail) {
-    res.cookie('user_id', req.body.email);
-    res.redirect("/urls");
+    if (foundUserEmail.password === req.body.password) {
+      res.cookie('user_id', req.body.email);
+      res.redirect("/urls");
+    } else {
+      res.send(res.statusCode = 403);
+    }
   } else {
     res.send(res.statusCode = 401);
   }
