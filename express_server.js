@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const app = express();
 const port = 8080;
 
@@ -55,31 +55,25 @@ app.get("/urls", (req, res) => {
 app.post("/login", (req, res)=> {
   const username = req.body.username;
   res.cookie('username', username);
-  console.log('res.cookie', res.cookie)
-
-  const templateVars = {
-    username: req.cookies["username"],
-  };
-
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username')
+  res.clearCookie('username');
   res.redirect("/urls");
 });
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    username: req.cookies["username"],
+    username: req.cookies["username"]
   };
   res.render('urls_new', templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL], 
+    longURL: urlDatabase[req.params.shortURL],
     username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
@@ -87,7 +81,7 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   const generatedShortUrl = generateRandomString();
   urlDatabase[generatedShortUrl] = req.body.longURL;
-  const templateVars = { 
+  const templateVars = {
     shortURL: generatedShortUrl,
     longURL: urlDatabase[generatedShortUrl],
     username: req.cookies["username"] };
