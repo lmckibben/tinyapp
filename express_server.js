@@ -52,6 +52,13 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.get("/register", (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render("user_register", templateVars);
+});
+
 app.post("/login", (req, res)=> {
   const username = req.body.username;
   res.cookie('username', username);
