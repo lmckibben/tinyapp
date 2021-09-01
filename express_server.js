@@ -75,13 +75,16 @@ app.get("/register", (req, res) => {
 });
 
 app.post('/register', (req, res) => {
+  res.cookie('user_id', req.body.email);
+  if (req.body.email.length === 0 || req.body.password.length === 0) {
+    res.send(res.statusCode = 400);
+  }
   const user_id = generateRandomString();
   users[user_id] = {
     id: user_id,
     email: req.body.email,
     password: req.body.password
   }
-  res.cookie('user_id', req.body.email);
   res.redirect('/urls');
 });
 
