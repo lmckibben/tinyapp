@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const morgan = require('module');
 const app = express();
 const port = 8080;
 
@@ -40,7 +39,6 @@ const urlDatabase = {
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(morgan(dev));
 
 app.get("/", (req, res) => {
   res.send("Hello");
