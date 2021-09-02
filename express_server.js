@@ -3,7 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session')
 const bcrypt = require('bcryptjs');
-const getUserEmail = require('./get_user_email.js');
+const helperFunction = require('./helpers.js');
+
 
 const app = express();
 const port = 8080;
@@ -15,31 +16,6 @@ app.use(cookieSession({
   name: 'session',
   keys: ['key1', 'key2']
 }))
-
-const generateRandomString = function() {
-  let output = "";
-  let i = 0;
-  while (i < 6) {
-    let ranNum = Math.floor(Math.random() * 3) + 1;
-    if (ranNum === 1) {
-      let ranCharCode = Math.floor(Math.random() * (57 - 48) + 48);
-      let ranChar = String.fromCharCode(ranCharCode);
-      output += ranChar;
-    }
-    if (ranNum === 2) {
-      let ranCharCode = Math.floor(Math.random() * (90 - 65) + 65);
-      let ranChar = String.fromCharCode(ranCharCode);
-      output += ranChar;
-    }
-    if (ranNum === 3) {
-      let ranCharCode = Math.floor(Math.random() * (122 - 97) + 97);
-      let ranChar = String.fromCharCode(ranCharCode);
-      output += ranChar;
-    }
-    i++;
-  }
-  return output;
-};
 
 const urlDatabase = {
   "b2xVn2": {
@@ -73,16 +49,6 @@ const users = {
   }
 }
 
-const urlsForUser = (id, urlDB) => {
-  const userURLS = {};
-  for (const key in urlDB) {
-    if (urlDB[key].userID === id) {
-      userURLS[key] = urlDB[key];
-    }
-  }
-  return userURLS;
-};
-
 app.get("/", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls")
@@ -93,7 +59,7 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const  userID = req.session.user_id;
-  const userUrls = urlsForUser(userID, urlDatabase);
+  const userUrls = helperFunction.urlsForUser(userID, urlDatabase);
   const templateVars = {
     urls: userUrls,
     user_id: req.session.user_id,
@@ -110,7 +76,7 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res)=> {
-  const foundUserEmail = getUserEmail(req.body.email, users);
+  const foundUserEmail = helperFunction.getUserEmail(req.body.email, users);
   if (foundUserEmail) {
     if (bcrypt.compareSync(req.body.password, foundUserEmail.password)) {
       req.session.user_id = foundUserEmail.id;
@@ -132,13 +98,13 @@ app.get("/register", (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  const foundUserEmail = getUserEmail(req.body.email, users);
+  const foundUserEmail = helperFunction.getUserEmail(req.body.email, users);
   if (req.body.email.length === 0 || req.body.password.length === 0) {
     res.send(res.statusCode = 401);
   } else if (foundUserEmail) {
     res.send(res.statusCode = 401); 
   } else {
-    const user_id = generateRandomString();
+    const user_id = helperFunction.generateRandomString();
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
     users[user_id] = {
       id: user_id,
@@ -188,7 +154,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls", (req, res) => {
   if (req.session.user_id) {
-    const generatedShortUrl = generateRandomString();
+    const generatedShortUrl = helperFunction.generateRandomString();
     urlDatabase[generatedShortUrl] = {
       longURL: req.body.longURL,
       userID: req.session.user_id
