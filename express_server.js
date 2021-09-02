@@ -97,6 +97,7 @@ app.get("/urls", (req, res) => {
   const templateVars = {
     urls: userUrls,
     user_id: req.session.user_id,
+    email: req.session.email
   };
   res.render("urls_index", templateVars);
 });
@@ -113,6 +114,7 @@ app.post("/login", (req, res)=> {
   if (foundUserEmail) {
     if (bcrypt.compareSync(req.body.password, foundUserEmail.password)) {
       req.session.user_id = foundUserEmail.id;
+      req.session.email = req.body.email;
       res.redirect("/urls");
     } else {
       res.send(res.statusCode = 403);
@@ -144,6 +146,7 @@ app.post('/register', (req, res) => {
       password: hashedPassword
     }
     req.session.user_id = user_id;
+    req.session.email = req.body.email;
     res.redirect('/urls');
   }
   
