@@ -91,8 +91,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  const  userID = req.cookies['user_id'];
+  const userUrls = urlsForUser(userID);
   const templateVars = {
-    urls: urlDatabase,
+    urls: userUrls,
     user_id: req.cookies['user_id']
   };
   res.render("urls_index", templateVars);
@@ -164,7 +166,6 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL
-  console.log('shorturl', shortURL);
   if (shortURL) {
     if (urlDatabase[shortURL] === undefined) {
       res.send(res.statusCode = 404);
@@ -204,19 +205,26 @@ app.get("/u/:shortURL", (req, res) => {
 
 //delete request
 app.post("/urls/:shortURL/delete", (req, res) => {
+  const  userID = req.cookies['user_id'];
   const shortURL = req.params.shortURL;
-  
-  delete urlDatabase[shortURL];
-
-  res.redirect("/urls");
+  if (userID !== urlDatabase[shortURL].userID) {
+    res.send(res.statusCode = 403);
+  } else {
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  }
 });
 
 app.post("/urls/:shortURL/edit", (req, res) => {
+  const  userID = req.cookies['user_id'];
   const shortURL = req.params.shortURL;
-  console.log('req.body', req.body)
-  const newLongURL = req.body[shortURL];
-  urlDatabase[shortURL].longURL = newLongURL;
-  res.redirect("/urls");
+  if (userID === urlDatabase[shortURL].userID) {
+    const newLongURL = req.body[shortURL];
+    urlDatabase[shortURL].longURL = newLongURL;
+    res.redirect("/urls");
+  } else {
+    res.send(res.statusCode = 403);
+  }
 });
 
 app.listen(port, () => {
