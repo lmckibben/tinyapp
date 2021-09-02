@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session')
 const bcrypt = require('bcryptjs');
+const getUserEmail = require('./get_user_email.js');
 
 const app = express();
 const port = 8080;
@@ -55,7 +56,7 @@ const urlDatabase = {
 const user1Pass = "purple-monkey-dinosaur";
 const user1Hashed = bcrypt.hashSync(user1Pass, 10);
 
-const user2Pass = "purple-monkey-dinosaur";
+const user2Pass = "dishwasher-funk";
 const user2Hashed = bcrypt.hashSync(user2Pass, 10);
 
 
@@ -72,26 +73,15 @@ const users = {
   }
 }
 
-const getUserEmail = (email) => {
-  for (const key in users) {
-    const user = users[key];
-    if (user.email === email) {
-      return user
-    }
-  }
-  return null
-};
-
-const urlsForUser = (id) => {
+const urlsForUser = (id, urlDB) => {
   const userURLS = {};
-  for (const key in urlDatabase) {
-    if ([urlDatabase[key].userID === id]) {
-      userURLS[key] = urlDatabase[key];
+  for (const key in urlDB) {
+    if (urlDB[key].userID === id) {
+      userURLS[key] = urlDB[key];
     }
   }
   return userURLS;
 };
-'urlsForUser()', urlsForUser('userRandomID');
 
 app.get("/", (req, res) => {
   if (req.session.user_id) {
@@ -103,10 +93,10 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const  userID = req.session.user_id;
-  const userUrls = urlsForUser(userID);
+  const userUrls = urlsForUser(userID, urlDatabase);
   const templateVars = {
     urls: userUrls,
-    user_id: req.session.user_id
+    user_id: req.session.user_id,
   };
   res.render("urls_index", templateVars);
 });
@@ -119,10 +109,10 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res)=> {
-  const foundUserEmail = getUserEmail(req.body.email);
+  const foundUserEmail = getUserEmail(req.body.email, users);
   if (foundUserEmail) {
     if (bcrypt.compareSync(req.body.password, foundUserEmail.password)) {
-      req.session.user_id = req.body.email;
+      req.session.user_id = foundUserEmail.id;
       res.redirect("/urls");
     } else {
       res.send(res.statusCode = 403);
@@ -140,7 +130,7 @@ app.get("/register", (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  const foundUserEmail = getUserEmail(req.body.email);
+  const foundUserEmail = getUserEmail(req.body.email, users);
   if (req.body.email.length === 0 || req.body.password.length === 0) {
     res.send(res.statusCode = 401);
   } else if (foundUserEmail) {
@@ -153,9 +143,7 @@ app.post('/register', (req, res) => {
       email: req.body.email,
       password: hashedPassword
     }
-    console.log('users', users);
-    req.session.user_id = "some value";
-    req.session.user_id = req.body.email;
+    req.session.user_id = user_id;
     res.redirect('/urls');
   }
   
