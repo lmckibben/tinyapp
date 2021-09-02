@@ -48,16 +48,24 @@ const urlDatabase = {
   }
 };
 
+//hashes default stored passwords
+const user1Pass = "purple-monkey-dinosaur";
+const user1Hashed = bcrypt.hashSync(user1Pass, 10);
+
+const user2Pass = "purple-monkey-dinosaur";
+const user2Hashed = bcrypt.hashSync(user2Pass, 10);
+
+
 const users = { 
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: user1Hashed
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: user2Hashed
   }
 }
 
@@ -110,7 +118,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res)=> {
   const foundUserEmail = getUserEmail(req.body.email);
   if (foundUserEmail) {
-    if (foundUserEmail.password === req.body.password) {
+    if (bcrypt.compareSync(req.body.password, foundUserEmail.password)) {
       res.cookie('user_id', req.body.email);
       res.redirect("/urls");
     } else {
@@ -136,11 +144,13 @@ app.post('/register', (req, res) => {
     res.send(res.statusCode = 401); 
   } else {
     const user_id = generateRandomString();
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
     users[user_id] = {
       id: user_id,
       email: req.body.email,
-      password: req.body.password
+      password: hashedPassword
     }
+    console.log('users', users);
     res.cookie('user_id', req.body.email);
     res.redirect('/urls');
   }
