@@ -120,7 +120,7 @@ app.post("/login", (req, res)=> {
       res.status(401).send('<h1>Username and password do not match. Please <a href="/urls">Try again</a>!</h1>');
     }
   } else {
-    res.send(res.statusCode = 401);
+    res.status(401).send('<h1>Account does not exist, please <a href="/register">register</a>!</h1>');
   }
 });
 
