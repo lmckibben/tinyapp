@@ -117,7 +117,7 @@ app.post("/login", (req, res)=> {
       req.session.email = req.body.email;
       res.redirect("/urls");
     } else {
-      res.status(401).send('<h1>Username and password do not match. Please <a href="/urls">Try again</a>!</h1>');
+      res.status(401).send('<h1>Username and password do not match. Please <a href="/login">Try again</a>!</h1>');
     }
   } else {
     res.status(401).send('<h1>Account does not exist, please <a href="/register">register</a>!</h1>');
@@ -144,8 +144,8 @@ app.post('/register', (req, res) => {
   }
   const foundUserEmail = helperFunction.getUserEmail(req.body.email, users);  
   if (foundUserEmail) {
-    res.status(403).send('<h1>Account already Exists, Please <a href="/register">Try again</a>!</h1>');
-  } 
+    res.status(403).send('<h1>Account already Exists, Please <a href="/">Try again</a>!</h1>');
+  } else {
     const user_id = helperFunction.generateRandomString();
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);   
     users[user_id] = {
@@ -156,6 +156,7 @@ app.post('/register', (req, res) => {
     req.session.user_id = user_id;
     req.session.email = req.body.email;
     res.redirect('/urls'); 
+  }
 });
 
 //post request for logging out
@@ -169,11 +170,10 @@ app.get("/urls/new", (req, res) => {
   if (req.session.user_id) {
     const templateVars = {
       user_id: req.session.user_id,
-      email: req.session.email
     };
     res.render('urls_new', templateVars);
   } else {
-    res.status(401).send('<h1>You must be <a href="/urls">logged in</a> to create new Urls!</h1>');
+    res.status(401).send('<h1>You must be <a href="/login">logged in</a> to create new Urls!</h1>');
   }
 });
 
@@ -206,10 +206,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   const  userID = req.session.user_id;
   const shortURL = req.params.shortURL;
   if (!userID) {
-    res.status(403).send('<h1>You must be logged in and the creator to delete a <a href="/urls">url</a>!</h1>');
+    res.status(403).send('<h1>You must be logged in and the creator to delete a <a href="/login">url</a>!</h1>');
   }
   if (userID !== urlDatabase[shortURL].userID) {
-    res.status(403).send('<h1>Only the person who created can delete a <a href="/urls">url</a>!</h1>');
+    res.status(403).send('<h1>Only the person who created can delete a <a href="/login">url</a>!</h1>');
   } else {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
@@ -221,7 +221,7 @@ app.post("/urls/:shortURL/edit", (req, res) => {
   const  userID = req.session.user_id;
   const shortURL = req.params.shortURL;
   if (!userID) {
-    res.status(403).send('<h1>You must be <a href="/urls">logged in</a> and be the creator to edit urls!</h1>');
+    res.status(403).send('<h1>You must be <a href="/login">logged in</a> and be the creator to edit urls!</h1>');
   }
   if (userID === urlDatabase[shortURL].userID) {
     const newLongURL = req.body[shortURL];
