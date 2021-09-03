@@ -161,7 +161,7 @@ app.post('/register', (req, res) => {
 //post request for logging out
 app.post("/logout", (req, res) => {
   req.session = null;
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 //get request for urls_new
