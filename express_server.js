@@ -139,12 +139,11 @@ app.get("/register", (req, res) => {
 
 //post request for urls_register
 app.post('/register', (req, res) => {
-  if (req.body.email.length === 0 || req.body.password.length === 0) {
-    res.status(401).send('<h1>You must fill out all the information. Please <a href="/register">Try again</a>!</h1>');
-  }
   const foundUserEmail = helperFunction.getUserEmail(req.body.email, users);  
-  if (foundUserEmail) {
-    res.status(403).send('<h1>Account already Exists, Please <a href="/">Try again</a>!</h1>');
+  if (!req.body.email || !req.body.password) {
+    res.status(401).send('<h1>You must fill out all the information. Please <a href="/register">Try again</a>!</h1>');
+  } else if (foundUserEmail) {
+    res.status(403).send('<h1>Account already Exists, Please <a href="/register">Try again</a>!</h1>');
   } else {
     const user_id = helperFunction.generateRandomString();
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);   
@@ -170,6 +169,7 @@ app.get("/urls/new", (req, res) => {
   if (req.session.user_id) {
     const templateVars = {
       user_id: req.session.user_id,
+      email: req.session.email
     };
     res.render('urls_new', templateVars);
   } else {
